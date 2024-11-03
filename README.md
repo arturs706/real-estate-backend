@@ -117,9 +117,11 @@ Installation
 
 Create a .env file in the root directory of your project with the following variables:
 
+```
 DATABASE_URL_RO: Connection string for your PostgreSQL database with read-only access.
 JWT_SECRET: Secret key for JWT authentication, used to secure tokens.
 SERVER_PORT: Port on which the server will run (e.g., 10000).
 SERVER_HOST: Host address for the server (e.g., 0.0.0.0).
 POSTGRES_USER: PostgreSQL database user (e.g., arturs).
 POSTGRES_PASSWORD: Password for the PostgreSQL user.
+```
