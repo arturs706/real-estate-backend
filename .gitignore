@@ -1,0 +1,8 @@
+# Rust
+/target
+
+# Environment variables
+*.env
+
+# REST client files (if using *.rest for API requests)
+*.rest
