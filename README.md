@@ -10,8 +10,6 @@ A robust Rust-based backend service built with Actix-web framework for managing 
 + API Services
 + Getting Started
 + Environment Variables
-+ API Documentation
-+ Database Schema
 
 ✨ **Features**
 
@@ -54,7 +52,6 @@ A robust Rust-based backend service built with Actix-web framework for managing 
 + Serialization: serde 1.0.150, serde_json 1.0.89
 + Async Runtime: Tokio 1.37
 + File Handling: actix-multipart 0.6.1
-
 
 📦 **Dependencies**
 <pre> 
