@@ -1,4 +1,4 @@
-🏠 # Real Estate Backend API
+🏠 #Real Estate Backend API
 
 A robust Rust-based backend service built with Actix-web framework for managing real estate listings, user authentication, and property diary entries.
 
@@ -101,17 +101,17 @@ Installation
 
 1. Clone the repository:
 
-git clone https://github.com/yourusername/real-estate-backend.git
-cd real-estate-backend
+`git clone https://github.com/yourusername/real-estate-backend.git`
+`cd real-estate-backend`
 
 2. Install dependencies:
 
-cargo build
+`cargo build`
 
 3. Set up your environment variables (see Environment Variables).
 4. Start the server:
 
-cargo run
+`cargo run`
 
 🌐  **Environment Variables**
 
