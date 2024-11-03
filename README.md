@@ -57,7 +57,6 @@ A robust Rust-based backend service built with Actix-web framework for managing 
 
 
 📦 **Dependencies**
-
 <pre> 
 [dependencies]
 actix-web = "4.2.1"
