@@ -155,3 +155,9 @@ pub struct MaintenanceDetails {
     pub contractor: String,
     pub notification: Option<bool>,
 }
+
+#[derive(Deserialize)]
+pub struct DateQueryParams {
+    pub start_date: Option<NaiveDate>,
+    pub end_date: Option<NaiveDate>,
+}

@@ -23,6 +23,10 @@ pub fn diary_event_configure_routes(cfg: &mut web::ServiceConfig) {
             .route(
                 "/users/{user_id}",
                 web::get().to(diary_event_service::get_event_by_user_id),
+            )
+            .route(
+                "/diary/{user_id}/events",
+                web::get().to(diary_event_service::get_event_by_user_id_with_dates),
             ),
     );
 }
