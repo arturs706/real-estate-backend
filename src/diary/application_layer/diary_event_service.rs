@@ -1,6 +1,6 @@
 use crate::diary::domain_layer::diary_event::Event;
 use crate::diary::domain_layer::diary_event_types::{
-    CreateEventRequest, DateRangeQuery, EventDetails,
+    CreateEventRequest, EventDetails,
 };
 use crate::diary::infrastructure_layer::diary_event_repo::EventRepository;
 use crate::AppState;
@@ -33,16 +33,13 @@ pub async fn get_event_by_id(
 pub async fn get_event_by_user_id(
     state: web::Data<AppState>,
     user_id: web::Path<Uuid>,
-    query: web::Query<DateRangeQuery>,
 ) -> impl Responder {
     let repo = EventRepository::new();
 
     match repo
         .get_user_events(
             state.into_inner(),
-            user_id.into_inner(),
-            query.start_date,
-            query.end_date,
+            user_id.into_inner()
         )
         .await
     {

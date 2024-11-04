@@ -34,6 +34,7 @@ crossbeam-channel = "0.5.13"
 rust-s3 = "0.33.0"
 time = "0.3.36"
 actix-cors = "0.7.0"
+thiserror = "1.0.66"
 
 [profile.release]
 lto = true

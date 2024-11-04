@@ -34,8 +34,8 @@ pub enum EventDetails {
     Viewing(ViewingDetails),
     Appointment(AppointmentDetails),
     Inspection(InspectionDetails),
-    Leave(LeaveDetails),
-    Meeting(MeetingDetails),
+    SickLeave(LeaveDetails),
+    StaffMeeting(MeetingDetails),
     Valuation(ValuationDetails),
     Callback(CallbackDetails),
     Maintenance(MaintenanceDetails),
@@ -154,10 +154,4 @@ pub struct MaintenanceDetails {
     pub property_id: String,
     pub contractor: String,
     pub notification: Option<bool>,
-}
-
-#[derive(Deserialize)]
-pub struct DateRangeQuery {
-    pub start_date: Option<NaiveDate>,
-    pub end_date: Option<NaiveDate>,
 }

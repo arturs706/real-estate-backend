@@ -21,7 +21,7 @@ pub fn diary_event_configure_routes(cfg: &mut web::ServiceConfig) {
                 web::delete().to(diary_event_service::delete_event),
             )
             .route(
-                "/users/{user_id}/events",
+                "/users/{user_id}",
                 web::get().to(diary_event_service::get_event_by_user_id),
             ),
     );
