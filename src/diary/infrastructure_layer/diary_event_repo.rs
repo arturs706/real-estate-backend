@@ -1,12 +1,7 @@
 use crate::{
-    diary::domain_layer::{
-        diary_event::{Event, EventType},
-        diary_event_types::{
-            AppointmentDetails, CallbackDetails, EventDetails, InspectionDetails, LeaveDetails,
-            MaintenanceDetails, MeetingDetails, NoteDetails, PublicHolidayDetails,
-            StaffHolidayDetails, TrainingDetails, ValuationDetails, ViewingDetails,
+    diary::domain_layer::diary_event_types::{
+            AppointmentDetails, CallbackDetails, Event, EventDetails, EventType, InspectionDetails, LeaveDetails, MaintenanceDetails, MeetingDetails, NoteDetails, PublicHolidayDetails, StaffHolidayDetails, TrainingDetails, ValuationDetails, ViewingDetails
         },
-    },
     AppState,
 };
 use actix_web::{dev::Path, error::ResponseError};

@@ -1,6 +1,5 @@
-use crate::diary::domain_layer::diary_event::Event;
 use crate::diary::domain_layer::diary_event_types::{
-    CreateEventRequest, DateQueryParams, EventDetails,
+    CreateEventRequest, DateQueryParams, Event, EventDetails
 };
 use crate::diary::infrastructure_layer::diary_event_repo::EventRepository;
 use crate::AppState;

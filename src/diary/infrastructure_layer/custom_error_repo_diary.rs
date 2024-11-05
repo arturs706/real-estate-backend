@@ -1,7 +1,5 @@
-use serde_json::json;
 use serde_json::Error as SerdeError;
 use sqlx::Error as SqlxError;
-use std::fmt;
 use thiserror::Error;
 use uuid::Error as UuidError;
 
