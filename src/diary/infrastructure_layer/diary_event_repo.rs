@@ -1,7 +1,9 @@
 use crate::{
     diary::domain_layer::diary_event_types::{
-            AppointmentDetails, CallbackDetails, Event, EventDetails, EventType, InspectionDetails, LeaveDetails, MaintenanceDetails, MeetingDetails, NoteDetails, PublicHolidayDetails, StaffHolidayDetails, TrainingDetails, ValuationDetails, ViewingDetails
-        },
+        AppointmentDetails, CallbackDetails, Event, EventDetails, EventType, InspectionDetails,
+        LeaveDetails, MaintenanceDetails, MeetingDetails, NoteDetails, PublicHolidayDetails,
+        StaffHolidayDetails, TrainingDetails, ValuationDetails, ViewingDetails,
+    },
     AppState,
 };
 use actix_web::{dev::Path, error::ResponseError};
@@ -304,7 +306,7 @@ impl EventRepository {
     SELECT
         e.*,
         CASE e.event_type
-            WHEN 'viewing' THEN (
+                   WHEN 'viewing' THEN (
                 SELECT jsonb_build_object(
                     'property_id', vd.property_id,
                     'client_name', vd.client_name,
@@ -327,7 +329,73 @@ impl EventRepository {
                 FROM appointment_details ad
                 WHERE ad.event_id = e.id
             )
-            /* Additional CASEs for other event types... */
+            WHEN 'inspection' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', id.property_id,
+                    'contractor', id.contractor,
+                    'notification', id.notification
+                )
+                FROM inspection_details id
+                WHERE id.event_id = e.id
+            )
+            WHEN 'sickleave' THEN (
+                SELECT jsonb_build_object(
+                    'staff_member', ld.staff_member,
+                    'is_half_day', ld.is_half_day
+                )
+                FROM leave_details ld
+                WHERE ld.event_id = e.id
+            )
+            WHEN 'staffmeeting' THEN (
+                SELECT jsonb_build_object(
+                    'location', md.location,
+                    'is_recurring', md.is_recurring,
+                    'recurrence_pattern', md.recurrence_pattern
+                )
+                FROM meeting_details md
+                WHERE md.event_id = e.id
+            )
+            WHEN 'valuation' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', vd.property_id,
+                    'client_name', vd.client_name,
+                    'contact_number', vd.contact_number,
+                    'notification', vd.notification
+                )
+                FROM valuation_details vd
+                WHERE vd.event_id = e.id
+            )
+            WHEN 'callback' THEN (
+                SELECT jsonb_build_object(
+                    'contact_name', cd.contact_name,
+                    'phone_number', cd.phone_number,
+                    'is_urgent', cd.is_urgent
+                )
+                FROM callback_details cd
+                WHERE cd.event_id = e.id
+            )
+            WHEN 'maintenance' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', md.property_id,
+                    'contractor', md.contractor,
+                    'notification', md.notification
+                )
+                FROM maintenance_details md
+                WHERE md.event_id = e.id
+            )
+            WHEN 'staffholiday' THEN (
+                SELECT jsonb_build_object(
+                    'staff_member', hd.staff_member,
+                    'holiday_type', hd.holiday_type,
+                    'is_half_day', hd.is_half_day,
+                    'approval_status', hd.approval_status,
+                    'approved_by', hd.approved_by,
+                    'approval_date', hd.approval_date,
+                    'remaining_days', hd.remaining_days
+                )
+                FROM staff_holiday_details hd
+                WHERE hd.event_id = e.id
+            )
             WHEN 'training' THEN (
                 SELECT jsonb_build_object(
                     'training_title', td.training_title,
@@ -344,6 +412,35 @@ impl EventRepository {
                 )
                 FROM training_details td
                 WHERE td.event_id = e.id
+            )
+            WHEN 'publicholiday' THEN (
+                SELECT jsonb_build_object(
+                    'holiday_name', phd.holiday_name,
+                    'region', phd.region,
+                    'affects_all_staff', phd.affects_all_staff,
+                    'affected_departments', phd.affected_departments,
+                    'is_bank_holiday', phd.is_bank_holiday,
+                    'office_status', phd.office_status,
+                    'custom_working_hours', phd.custom_working_hours
+                )
+                FROM public_holiday_details phd
+                WHERE phd.event_id = e.id
+            )
+            WHEN 'note' THEN (
+                SELECT jsonb_build_object(
+                    'note_type', nd.note_type,
+                    'assigned_staff', nd.assigned_staff,
+                    'is_private', nd.is_private,
+                    'category', nd.category,
+                    'priority', nd.priority,
+                    'related_entity_type', nd.related_entity_type,
+                    'related_entity_id', nd.related_entity_id,
+                    'status', nd.status,
+                    'completion_date', nd.completion_date,
+                    'completed_by', nd.completed_by
+                )
+                FROM note_details nd
+                WHERE nd.event_id = e.id
             )
         END AS details
     FROM events e
@@ -427,51 +524,147 @@ impl EventRepository {
         let pool = &state.db;
         let query = r#"
         SELECT
-            e.*,
-            CASE e.event_type
-                WHEN 'viewing' THEN (
-                    SELECT jsonb_build_object(
-                        'property_id', vd.property_id,
-                        'client_name', vd.client_name,
-                        'contact_number', vd.contact_number,
-                        'viewing_type', vd.viewing_type,
-                        'notification_length', vd.notification_length
-                    )
-                    FROM viewing_details vd
-                    WHERE vd.event_id = e.id
+        e.*,
+        CASE e.event_type
+                   WHEN 'viewing' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', vd.property_id,
+                    'client_name', vd.client_name,
+                    'contact_number', vd.contact_number,
+                    'viewing_type', vd.viewing_type,
+                    'notification_length', vd.notification_length
                 )
-                WHEN 'appointment' THEN (
-                    SELECT jsonb_build_object(
-                        'location', ad.location,
-                        'property_id', ad.property_id,
-                        'is_private', ad.is_private,
-                        'notification', ad.notification,
-                        'is_recurring', ad.is_recurring,
-                        'recurrence_pattern', ad.recurrence_pattern
-                    )
-                    FROM appointment_details ad
-                    WHERE ad.event_id = e.id
+                FROM viewing_details vd
+                WHERE vd.event_id = e.id
+            )
+            WHEN 'appointment' THEN (
+                SELECT jsonb_build_object(
+                    'location', ad.location,
+                    'property_id', ad.property_id,
+                    'is_private', ad.is_private,
+                    'notification', ad.notification,
+                    'is_recurring', ad.is_recurring,
+                    'recurrence_pattern', ad.recurrence_pattern
                 )
-                WHEN 'training' THEN (
-                    SELECT jsonb_build_object(
-                        'training_title', td.training_title,
-                        'location', td.location,
-                        'lead_staff', td.lead_staff,
-                        'attendees', td.attendees,
-                        'additional_attendees', td.additional_attendees,
-                        'training_type', td.training_type,
-                        'training_status', td.training_status,
-                        'materials_url', td.materials_url,
-                        'prerequisites', td.prerequisites,
-                        'attendance_confirmed', td.attendance_confirmed,
-                        'certificates_issued', td.certificates_issued
-                    )
-                    FROM training_details td
-                    WHERE td.event_id = e.id
+                FROM appointment_details ad
+                WHERE ad.event_id = e.id
+            )
+            WHEN 'inspection' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', id.property_id,
+                    'contractor', id.contractor,
+                    'notification', id.notification
                 )
-            END AS details
-        FROM events e
-        WHERE e.created_by = $1
+                FROM inspection_details id
+                WHERE id.event_id = e.id
+            )
+            WHEN 'sickleave' THEN (
+                SELECT jsonb_build_object(
+                    'staff_member', ld.staff_member,
+                    'is_half_day', ld.is_half_day
+                )
+                FROM leave_details ld
+                WHERE ld.event_id = e.id
+            )
+            WHEN 'staffmeeting' THEN (
+                SELECT jsonb_build_object(
+                    'location', md.location,
+                    'is_recurring', md.is_recurring,
+                    'recurrence_pattern', md.recurrence_pattern
+                )
+                FROM meeting_details md
+                WHERE md.event_id = e.id
+            )
+            WHEN 'valuation' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', vd.property_id,
+                    'client_name', vd.client_name,
+                    'contact_number', vd.contact_number,
+                    'notification', vd.notification
+                )
+                FROM valuation_details vd
+                WHERE vd.event_id = e.id
+            )
+            WHEN 'callback' THEN (
+                SELECT jsonb_build_object(
+                    'contact_name', cd.contact_name,
+                    'phone_number', cd.phone_number,
+                    'is_urgent', cd.is_urgent
+                )
+                FROM callback_details cd
+                WHERE cd.event_id = e.id
+            )
+            WHEN 'maintenance' THEN (
+                SELECT jsonb_build_object(
+                    'property_id', md.property_id,
+                    'contractor', md.contractor,
+                    'notification', md.notification
+                )
+                FROM maintenance_details md
+                WHERE md.event_id = e.id
+            )
+            WHEN 'staffholiday' THEN (
+                SELECT jsonb_build_object(
+                    'staff_member', hd.staff_member,
+                    'holiday_type', hd.holiday_type,
+                    'is_half_day', hd.is_half_day,
+                    'approval_status', hd.approval_status,
+                    'approved_by', hd.approved_by,
+                    'approval_date', hd.approval_date,
+                    'remaining_days', hd.remaining_days
+                )
+                FROM staff_holiday_details hd
+                WHERE hd.event_id = e.id
+            )
+            WHEN 'training' THEN (
+                SELECT jsonb_build_object(
+                    'training_title', td.training_title,
+                    'location', td.location,
+                    'lead_staff', td.lead_staff,
+                    'attendees', td.attendees,
+                    'additional_attendees', td.additional_attendees,
+                    'training_type', td.training_type,
+                    'training_status', td.training_status,
+                    'materials_url', td.materials_url,
+                    'prerequisites', td.prerequisites,
+                    'attendance_confirmed', td.attendance_confirmed,
+                    'certificates_issued', td.certificates_issued
+                )
+                FROM training_details td
+                WHERE td.event_id = e.id
+            )
+            WHEN 'publicholiday' THEN (
+                SELECT jsonb_build_object(
+                    'holiday_name', phd.holiday_name,
+                    'region', phd.region,
+                    'affects_all_staff', phd.affects_all_staff,
+                    'affected_departments', phd.affected_departments,
+                    'is_bank_holiday', phd.is_bank_holiday,
+                    'office_status', phd.office_status,
+                    'custom_working_hours', phd.custom_working_hours
+                )
+                FROM public_holiday_details phd
+                WHERE phd.event_id = e.id
+            )
+            WHEN 'note' THEN (
+                SELECT jsonb_build_object(
+                    'note_type', nd.note_type,
+                    'assigned_staff', nd.assigned_staff,
+                    'is_private', nd.is_private,
+                    'category', nd.category,
+                    'priority', nd.priority,
+                    'related_entity_type', nd.related_entity_type,
+                    'related_entity_id', nd.related_entity_id,
+                    'status', nd.status,
+                    'completion_date', nd.completion_date,
+                    'completed_by', nd.completed_by
+                )
+                FROM note_details nd
+                WHERE nd.event_id = e.id
+            )
+        END AS details
+    FROM events e
+    WHERE e.created_by = $1
         AND ($2::date IS NULL OR e.date >= $2)
         AND ($3::date IS NULL OR e.date <= $3)
         ORDER BY e.date, e.start_time
