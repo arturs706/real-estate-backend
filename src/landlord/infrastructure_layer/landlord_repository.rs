@@ -7,8 +7,6 @@ use std::sync::Arc;
 use sqlx::{postgres::{PgHasArrayType, PgRow}, types::JsonValue};
 use sqlx::Row;
 use serde_json::Value;
-
-
 use crate::{
     landlord::domain_layer::{landlord_details::{BasicInfoRequest, LandlordDetails}, landlord_general::{LandlordGeneralRequest, LandlordPropertyCategory}, landlord_registration_progress::{RegistrationProgress, RegistrationStep, RegistrationSummary}, landlord_structured_registration_data::StructuredRegistrationData, landlords_address::AddressRequest, landlords_bank_details::BankDetailsRequest, landlords_lettings_management::LettingsPreferencesRequest}, AppState
 };
@@ -48,12 +46,8 @@ impl LandlordRepository {
     }
 
 
-
-
-
     pub async fn start_or_resume_registration(&self, state: Arc<AppState>, user_id: Option<Uuid>) -> Result<RegistrationProgress, CustomErrors> {
         if let Some(user_id) = user_id {
-            // Check for existing registration
             let existing = sqlx::query_as::<_, RegistrationProgress>(
                 "SELECT * FROM landlord_registration_progress 
                 WHERE registration_data->>'user_id' = $1 
@@ -70,7 +64,6 @@ impl LandlordRepository {
             }
         }
 
-        // Create new registration
         let registration_id = Uuid::new_v4();
         let expires_at = Utc::now() + Duration::days(7); // Registration expires in 7 days
 
@@ -87,12 +80,8 @@ impl LandlordRepository {
         .fetch_one(&state.db)
         .await
         .map_err(|e| CustomErrors::DatabaseError(e.to_string()))?;
-
         Ok(progress)
     }
-
-
-
 
     pub async fn save_registration_step(
         &self,
@@ -146,13 +135,13 @@ impl LandlordRepository {
         // Insert landlord details
         sqlx::query(
             "INSERT INTO landlord_details 
-             (landlord_id, full_name, gender, email, company_name, mobile_phone, landlord_type, status, 
+             (landlord_id, title, full_name, email, company_name, mobile_phone, landlord_type, status, 
               alternative_phone, additional_contact)
              VALUES ($1, $2, $3, $4, $5, $6, $7, 'active', $8, $9)",
         )
         .bind(landlord_id)
+        .bind(basic_info.title)
         .bind(basic_info.full_name)
-        .bind(basic_info.gender)
         .bind(basic_info.email)
         .bind(basic_info.company_name)
         .bind(basic_info.mobile_phone)
@@ -163,7 +152,6 @@ impl LandlordRepository {
         .await
         .map_err(|e| CustomErrors::DatabaseError(e.to_string()))?;
     
-        // Insert landlord general information
         let general_info: LandlordGeneralRequest = serde_json::from_value(registration.registration_data["general"].clone())
             .map_err(|e| CustomErrors::DatabaseError(e.to_string()))?;
         
@@ -258,7 +246,6 @@ impl LandlordRepository {
         .await
         .map_err(|e| CustomErrors::DatabaseError(e.to_string()))?;
     
-        // Commit transaction
         tx.commit()
             .await
             .map_err(|e| CustomErrors::DatabaseError(e.to_string()))?;

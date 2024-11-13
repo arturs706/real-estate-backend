@@ -5,3 +5,4 @@ pub mod landlords_bank_details;
 pub mod landlords_lettings_management;
 pub mod landlord_registration_progress;
 pub mod landlord_structured_registration_data;
+pub mod landlord_documents;

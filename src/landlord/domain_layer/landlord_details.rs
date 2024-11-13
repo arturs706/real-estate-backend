@@ -17,12 +17,25 @@ pub enum LandlordTypeEnum {
     Company,
 }
 
+#[derive(Clone, Serialize, Deserialize, Debug, sqlx::Type)]
+#[sqlx(type_name = "landlord_title_enum", rename_all = "lowercase")]
+pub enum LandlordTitle {
+    Mr,
+    Mrs,
+    Miss,
+    Ms,
+    Dr,
+    Prof,
+    Rev,
+    Other
+}
+
 
 #[derive(Clone, Serialize, Deserialize, FromRow, Debug)]
 pub struct LandlordDetails {
     pub landlord_id: Uuid,
+    pub title: Option<LandlordStatus>,
     pub full_name: Option<String>,
-    pub gender: Option<String>,
     pub email: String,
     pub company_name: Option<String>,
     pub mobile_phone: String,
@@ -38,7 +51,7 @@ pub struct LandlordDetails {
 #[derive(Serialize, Deserialize)]
 pub struct BasicInfoRequest {
     pub full_name: Option<String>,
-    pub gender: Option<String>,
+    pub title: Option<LandlordStatus>,
     pub email: String,
     pub company_name: Option<String>,
     pub mobile_phone: String,

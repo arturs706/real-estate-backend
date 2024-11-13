@@ -14,6 +14,7 @@ pub enum RegistrationStep {
     Address,
     Bankdetails,
     Lettingspreferences,
+    LandlordDocs,
     Completed
 }
 
@@ -55,6 +56,7 @@ impl fmt::Display for RegistrationStep {
             RegistrationStep::Address => write!(f, "address"),
             RegistrationStep::Bankdetails => write!(f, "bankdetails"),
             RegistrationStep::Lettingspreferences => write!(f, "lettingspreferences"),
+            RegistrationStep::LandlordDocs => write!(f, "landlorddocs"),
             RegistrationStep::Completed => write!(f, "completed"),
         }
     }

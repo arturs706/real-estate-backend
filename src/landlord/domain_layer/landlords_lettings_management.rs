@@ -15,7 +15,6 @@ pub enum LandlordPaymentFrequency {
     FourWeekly,
 }
 
-
 #[derive(Clone, Serialize, Deserialize, FromRow, Debug)]
 pub struct LandlordsLettingsManagement {
     pub id: Uuid,

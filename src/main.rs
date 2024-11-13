@@ -4,6 +4,7 @@
     clippy::upper_case_acronyms,
     dead_code
 )]
+use std::fs;
 use actix_cors::Cors;
 use actix_web::{http, web::Data, App, HttpServer};
 use diary::presentation_layer::{
@@ -49,7 +50,24 @@ mod landlord {
 pub struct AppState {
     pub db: Pool<Postgres>,
     pub jwt_secret: String,
+    pub upload_dir: String,
 }
+
+fn initialize_upload_directory() -> std::io::Result<String> {
+    let upload_dir = std::env::var("UPLOAD_DIR")
+        .unwrap_or_else(|_| "./uploads/id_documents".to_string());
+    fs::create_dir_all(&upload_dir)?;
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let permissions = fs::Permissions::from_mode(0o750); // rwxr-x---
+        fs::set_permissions(&upload_dir, permissions)?;
+    }
+
+    Ok(upload_dir)
+}
+
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -60,6 +78,9 @@ async fn main() -> std::io::Result<()> {
     let server_host = std::env::var("SERVER_HOST").expect("SERVER_HOST must be set");
 
     let server_ip = format!("{}:{}", server_host, server_port);
+    let upload_dir = initialize_upload_directory()
+    .expect("Failed to initialize upload directory");
+
     let pool = PgPoolOptions::new()
         .max_connections(1000)
         .connect(&database_url)
@@ -71,6 +92,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(AppState {
                 db: pool.clone(),
                 jwt_secret: jwt_secret.clone(),
+                upload_dir: upload_dir.clone()
+                
             }))
             .wrap(
                 Cors::default() // Add CORS middleware here
