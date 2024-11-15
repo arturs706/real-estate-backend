@@ -1,10 +1,10 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-use sqlx::types::JsonValue;
 use sqlx::prelude::FromRow;
-use std::str::FromStr;
+use sqlx::types::JsonValue;
 use std::fmt;
+use std::str::FromStr;
+use uuid::Uuid;
 
 #[derive(Clone, Serialize, Deserialize, Debug, sqlx::Type)]
 #[sqlx(type_name = "registration_step ", rename_all = "lowercase")]
@@ -15,9 +15,8 @@ pub enum RegistrationStep {
     Bankdetails,
     Lettingspreferences,
     LandlordDocs,
-    Completed
+    Completed,
 }
-
 
 #[derive(Clone, Serialize, Deserialize, FromRow, Debug)]
 pub struct RegistrationProgress {

@@ -24,7 +24,6 @@ pub struct Event {
     pub updated_at: Option<DateTime<Utc>>,
 }
 
-
 #[derive(Clone, Serialize, Deserialize, Debug, sqlx::Type)]
 #[sqlx(type_name = "event_type", rename_all = "lowercase")]
 pub enum EventType {

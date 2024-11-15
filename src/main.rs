@@ -4,7 +4,6 @@
     clippy::upper_case_acronyms,
     dead_code
 )]
-use std::fs;
 use actix_cors::Cors;
 use actix_web::{http, web::Data, App, HttpServer};
 use diary::presentation_layer::{
@@ -19,6 +18,7 @@ use properties::presentation_layer::{
     property_photos_controller::configure_photos_routes,
 };
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use std::fs;
 use user::presentation_layer::user_controller::user_configure_routes;
 mod properties {
     pub mod application_layer;
@@ -54,8 +54,8 @@ pub struct AppState {
 }
 
 fn initialize_upload_directory() -> std::io::Result<String> {
-    let upload_dir = std::env::var("UPLOAD_DIR")
-        .unwrap_or_else(|_| "./uploads/id_documents".to_string());
+    let upload_dir =
+        std::env::var("UPLOAD_DIR").unwrap_or_else(|_| "./uploads/id_documents".to_string());
     fs::create_dir_all(&upload_dir)?;
 
     #[cfg(unix)]
@@ -68,7 +68,6 @@ fn initialize_upload_directory() -> std::io::Result<String> {
     Ok(upload_dir)
 }
 
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
@@ -78,8 +77,7 @@ async fn main() -> std::io::Result<()> {
     let server_host = std::env::var("SERVER_HOST").expect("SERVER_HOST must be set");
 
     let server_ip = format!("{}:{}", server_host, server_port);
-    let upload_dir = initialize_upload_directory()
-    .expect("Failed to initialize upload directory");
+    let upload_dir = initialize_upload_directory().expect("Failed to initialize upload directory");
 
     let pool = PgPoolOptions::new()
         .max_connections(1000)
@@ -92,8 +90,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(Data::new(AppState {
                 db: pool.clone(),
                 jwt_secret: jwt_secret.clone(),
-                upload_dir: upload_dir.clone()
-                
+                upload_dir: upload_dir.clone(),
             }))
             .wrap(
                 Cors::default() // Add CORS middleware here

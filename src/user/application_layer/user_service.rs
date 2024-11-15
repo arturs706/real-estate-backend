@@ -57,7 +57,6 @@ pub async fn get_user_full_names(state: web::Data<AppState>) -> impl Responder {
     }
 }
 
-
 pub async fn update_user(state: web::Data<AppState>, user: web::Json<StaffUser>) -> impl Responder {
     let repo = UserRepository::new();
     match repo.update(state.into_inner(), user.into_inner()).await {

@@ -46,10 +46,14 @@ impl UserRepository {
         }
     }
 
-    pub async fn get_all_user_full_names(&self, state: Arc<AppState>) -> Result<Vec<StaffUserFullNames>, CustomErrors> {
-        let records = sqlx::query_as::<_, StaffUserFullNames>("SELECT user_id, name FROM staff_users")
-            .fetch_all(&state.db)
-            .await;
+    pub async fn get_all_user_full_names(
+        &self,
+        state: Arc<AppState>,
+    ) -> Result<Vec<StaffUserFullNames>, CustomErrors> {
+        let records =
+            sqlx::query_as::<_, StaffUserFullNames>("SELECT user_id, name FROM staff_users")
+                .fetch_all(&state.db)
+                .await;
 
         match records {
             Ok(users) => Ok(users),

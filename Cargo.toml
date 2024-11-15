@@ -6,35 +6,35 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.2.1"
-serde = { version = "1.0.150", features = ["derive"] }
+actix-web = "4.9.0"
+serde = { version = "1.0.215", features = ["derive"] }
 sqlx = {version = "0.7.2", features = ["runtime-tokio-native-tls", "postgres", "time", "chrono", "uuid", "bigdecimal"] }
-uuid = { version = "1.2.2", features = ["v4", "serde"] }
+uuid = { version = "1.11.0", features = ["v4", "serde"] }
 chrono = { version = "0.4.22", features = ["serde"] }
-futures-util = "0.3.29"
+futures-util = "0.3.31"
 jsonwebtoken = "9.1.0"
 dotenv = "0.15.0"
-derive_more = "0.99.17"
-serde_json = "1.0.89"
+derive_more = "0.99.18"
+serde_json = "1.0.132"
 argon2 = "0.5.2"
 listenfd = "1.0.1"
-image = { version = "0.24.7", features = ["avif"] }
+image = { version = "0.25.5", features = ["avif"] }
 futures-channel = "0.3.0"
-futures-executor = { version = "0.3.0", optional = true }
-libc = "0.2.0"
+futures-executor = { version = "0.3.31", optional = true }
+libc = "0.2.162"
 rdkafka = "0.36.2"
-async-std = { version = "1.9.0", features = ["attributes"] }
-tokio = { version = "1.37", features = ["full"] }
-log = "0.4.20"
-clap = "4.4.8"
-prost = "0.12.4"
-actix-multipart = "0.6.1"
+async-std = { version = "1.13.0", features = ["attributes"] }
+tokio = { version = "1.41.1", features = ["full"] }
+log = "0.4.22"
+clap = "4.5.21"
+prost = "0.13.3"
+actix-multipart = "0.7.2"
 mime = "0.3.17"
 crossbeam-channel = "0.5.13"
-rust-s3 = "0.33.0"
+rust-s3 = "0.35.1"
 time = "0.3.36"
 actix-cors = "0.7.0"
-thiserror = "1.0.66"
+thiserror = "2.0.3"
 
 [profile.release]
 lto = true

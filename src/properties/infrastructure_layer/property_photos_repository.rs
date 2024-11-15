@@ -137,7 +137,7 @@ impl PropertyPhotosRepository {
                 "{}{}-{}",
                 dir,
                 Uuid::new_v4(),
-                field.content_disposition().get_filename().unwrap()
+                field.content_disposition().unwrap().get_filename().unwrap()
             );
 
             let (snd, rcv) = bounded(10);
