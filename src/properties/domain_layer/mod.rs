@@ -1,3 +1,9 @@
-pub mod property;
+pub mod property_core;
 pub mod property_address;
-pub mod property_photos;
+pub mod property_specifications;
+pub mod property_certificates;
+pub mod property_services;
+pub mod property_keys_security;
+pub mod property_features;
+pub mod property_images;
+pub mod property_rental_info;

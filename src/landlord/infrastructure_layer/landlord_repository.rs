@@ -4,18 +4,14 @@ use chrono::Utc;
 use derive_more::Display;
 use serde::Serialize;
 use serde_json::json;
-use sqlx::{
-    postgres::PgHasArrayType,
-    types::JsonValue,
-};
+use sqlx::types::JsonValue;
 use std::sync::Arc;
 use uuid::Uuid;
 
 use crate::landlord::domain_layer::landlord_details::LandlordQueryParams;
 use crate::{
-    landlord::domain_layer::{
-        landlord_details::LandlordDetails, landlord_general::LandlordPropertyCategory,
-    },
+    landlord::domain_layer::
+    landlord_details::LandlordDetails,
     AppState,
 };
 
@@ -30,12 +26,6 @@ pub enum CustomErrors {
 }
 
 impl ResponseError for CustomErrors {}
-
-impl PgHasArrayType for LandlordPropertyCategory {
-    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
-        sqlx::postgres::PgTypeInfo::with_name("_landlord_property_categories")
-    }
-}
 
 pub struct LandlordRepository {}
 

@@ -1,5 +1,5 @@
 use crate::properties::{
-    domain_layer::property::Property,
+    domain_layer::property_core::PropertyCore,
     infrastructure_layer::properties_repository::PropertyRepository,
 };
 use crate::AppState;
@@ -13,9 +13,9 @@ pub async fn get_all(state: web::Data<AppState>) -> impl Responder {
     }
 }
 
-pub async fn add(state: web::Data<AppState>, property: web::Json<Property>) -> impl Responder {
+pub async fn add(state: web::Data<AppState>, property: web::Json<PropertyCore>) -> impl Responder {
     let repo = PropertyRepository::new();
-    match repo.save(state.into_inner(), property.into_inner()).await {
+    match repo.save_property(state.into_inner(), property.into_inner()).await {
         Ok(property) => HttpResponse::Ok().json(property),
         Err(e) => HttpResponse::InternalServerError().json(e),
     }

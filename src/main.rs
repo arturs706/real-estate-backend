@@ -15,7 +15,7 @@ use landlord::presentation_layer::landlord_controller::landlord_configure_routes
 use listenfd::ListenFd;
 use properties::presentation_layer::{
     properties_controller::configure_routes, property_address_controller::configure_address_routes,
-    property_photos_controller::configure_photos_routes,
+    property_images_controller::configure_photos_routes,
 };
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use std::fs;

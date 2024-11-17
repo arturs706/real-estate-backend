@@ -1,4 +1,4 @@
-use crate::{properties::domain_layer::property_photos::PropertyPhotos, AppState};
+use crate::{properties::domain_layer::property_images::PropertyImages, AppState};
 use actix_web::web::Json;
 use actix_web::HttpResponse;
 use actix_web::{http::StatusCode, HttpRequest};
@@ -19,47 +19,41 @@ use tokio::fs as tfs;
 use tokio::io::AsyncWriteExt as _;
 use uuid::Uuid;
 
-pub struct PropertyPhotosRepository {}
+pub struct PropertyImagesRepository {}
 
-impl PropertyPhotosRepository {
+impl PropertyImagesRepository {
     pub fn new() -> Self {
-        PropertyPhotosRepository {}
-    }
-
-    pub async fn get_all(&self, state: Arc<AppState>) -> Result<Vec<PropertyPhotos>, Json<String>> {
-        let result = sqlx::query_as::<_, PropertyPhotos>("SELECT * FROM property_photos")
-            .fetch_all(&state.db)
-            .await;
-
-        match result {
-            Ok(property_photos) => Ok(property_photos),
-            Err(e) => Err(Json(e.to_string())),
-        }
+        PropertyImagesRepository {}
     }
 
     pub async fn save(
         &self,
         state: Arc<AppState>,
-        property_photos: PropertyPhotos,
+        property_images: PropertyImages,
     ) -> Result<serde_json::Value, Json<String>> {
-        let result = sqlx::query_as::<_, PropertyPhotos>(
+        let result = sqlx::query_as::<_, PropertyImages>(
             r#"
-            INSERT INTO property_photos (property_photos_id, property_id, photo_urls)
-            VALUES ($1, $2, $3)
+            INSERT INTO property_photos (property_photos_id, property_id, photo_urls, image_descriptions, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *
             "#,
         )
-        .bind(&property_photos.property_photos_id)
-        .bind(&property_photos.property_id)
-        .bind(&property_photos.photo_urls)
+        .bind(&property_images.image_list_id)
+        .bind(&property_images.property_id)
+        .bind(&property_images.image_urls)
+        .bind(&property_images.image_descriptions)
+        .bind(&property_images.created_at)
+        .bind(&property_images.updated_at)
         .fetch_one(&state.db)
         .await;
-
+    
         match result {
-            Ok(property_photos) => {
-                let json_with_with_message: serde_json::Value =
-                    json!({ "message": "success", "address": property_photos });
-                Ok(json_with_with_message)
+            Ok(property_images) => {
+                let json_with_message: serde_json::Value = json!({ 
+                    "message": "success", 
+                    "property_images": property_images 
+                });
+                Ok(json_with_message)
             }
             Err(e) => Err(Json(e.to_string())),
         }
@@ -69,9 +63,9 @@ impl PropertyPhotosRepository {
         &self,
         state: Arc<AppState>,
         property_id: Uuid,
-    ) -> Result<Vec<PropertyPhotos>, Json<String>> {
-        let result = sqlx::query_as::<_, PropertyPhotos>(
-            "SELECT * FROM property_photos WHERE property_id = $1",
+    ) -> Result<Vec<PropertyImages>, Json<String>> {
+        let result = sqlx::query_as::<_, PropertyImages>(
+            "SELECT * FROM property_images WHERE property_id = $1",
         )
         .bind(&property_id)
         .fetch_all(&state.db)

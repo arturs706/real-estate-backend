@@ -8,20 +8,20 @@ edition = "2021"
 [dependencies]
 actix-web = "4.9.0"
 serde = { version = "1.0.215", features = ["derive"] }
-sqlx = {version = "0.7.2", features = ["runtime-tokio-native-tls", "postgres", "time", "chrono", "uuid", "bigdecimal"] }
+sqlx = {version = "0.8.2", features = ["runtime-tokio-native-tls", "postgres", "time", "chrono", "uuid", "rust_decimal"] }
 uuid = { version = "1.11.0", features = ["v4", "serde"] }
 chrono = { version = "0.4.22", features = ["serde"] }
 futures-util = "0.3.31"
 jsonwebtoken = "9.1.0"
 dotenv = "0.15.0"
 derive_more = "0.99.18"
-serde_json = "1.0.132"
+serde_json = "1.0.133"
 argon2 = "0.5.2"
 listenfd = "1.0.1"
 image = { version = "0.25.5", features = ["avif"] }
 futures-channel = "0.3.0"
 futures-executor = { version = "0.3.31", optional = true }
-libc = "0.2.162"
+libc = "0.2.164"
 rdkafka = "0.36.2"
 async-std = { version = "1.13.0", features = ["attributes"] }
 tokio = { version = "1.41.1", features = ["full"] }
@@ -35,6 +35,7 @@ rust-s3 = "0.35.1"
 time = "0.3.36"
 actix-cors = "0.7.0"
 thiserror = "2.0.3"
+rust_decimal = "1.36.0"
 
 [profile.release]
 lto = true
